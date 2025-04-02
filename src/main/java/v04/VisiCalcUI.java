@@ -1,6 +1,7 @@
 package v04;
 
 import java.util.Scanner;
+
 import librerias.Consola;
 
 public class VisiCalcUI {
@@ -41,8 +42,9 @@ public class VisiCalcUI {
             for (int j = 0; j < viewport.getColumnasViewport(); j++) {
                 String celda = viewport.getCelda(i, j).getContenido();
                 celda = celda.length() > 5 ? celda.substring(0, 5) : String.format("%-5s", celda);
-                
-                if (i == viewport.getFilaCursorGlobal() - viewport.getFilaInicio() && j == viewport.getColumnaCursorGlobal() - viewport.getColumnaInicio()) {
+
+                if (i == viewport.getFilaCursorGlobal() - viewport.getFilaInicio()
+                        && j == viewport.getColumnaCursorGlobal() - viewport.getColumnaInicio()) {
                     System.out.print("[" + celda + "]");
                 } else {
                     System.out.print(" " + celda + " ");
@@ -61,8 +63,8 @@ public class VisiCalcUI {
         char letraColumna = (char) ('A' + columnaActual);
 
         System.out.print("[" + letraColumna + (filaActual + 1) + "] ");
-        System.out.println("OPCIONES: desplazarse: wasd | editar: e | salir: q");
-        System.out.println("COMANDO >");        
+        System.out.println("OPCIONES: desplazarse: wasd | editar: e | salir: q | ordenar: o |");
+        System.out.println("COMANDO >");
 
     }
 
@@ -85,6 +87,9 @@ public class VisiCalcUI {
                 break;
             case 'Q':
                 return false;
+            case 'O':
+                ordenarRango();
+                break;
             default:
                 System.out.println("Comando inválido. Intente nuevamente.");
         }
@@ -94,8 +99,35 @@ public class VisiCalcUI {
     private void editarCeldaActual() {
         Celda celdaActual = viewport.getCeldaCursor();
         Consola.posicionarse(2, 1);
-        System.out.print ("Ingrese el texto:");
+        System.out.print("Ingrese el texto:");
         String texto = scanner.next();
         celdaActual.setContenido(texto);
+    }
+
+    private void ordenarRango() {
+        Consola.posicionarse(2, 1);
+        System.out.print("Ingrese rango (inicio fin): ");
+        try {
+            int inicio = Integer.parseInt(scanner.next()) - 1;
+            int fin = Integer.parseInt(scanner.next()) - 1;
+            Rango rango = new Rango(viewport.getColumnaCursorGlobal(), inicio, fin);
+            ordenarRango(rango);
+        } catch (NumberFormatException e) {
+            System.out.print("Formato inválido. Use: numero numero");
+        }
+    }
+
+    private void ordenarRango(Rango rango) {
+        System.out.print("Ordenar (1:asc, 2:desc): ");
+        try {
+            int opcion = Integer.parseInt(scanner.next());
+            if (opcion != 1 && opcion != 2) {
+                throw new NumberFormatException();
+            }
+            boolean ascendente = opcion == 1;
+            viewport.getHoja().ordenarColumnaEnRango(rango, ascendente);
+        } catch (NumberFormatException e) {
+            System.out.print("Opción inválida. Use 1 para ascendente o 2 para descendente");
+        }
     }
 }
