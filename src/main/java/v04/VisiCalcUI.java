@@ -29,6 +29,9 @@ public class VisiCalcUI {
     private void mostrarHoja() {
         Consola.limpiarPantalla();
         mostrarOpciones();
+        System.out.println();
+        System.out.println();
+        System.out.println();
         System.out.print("      ");
         for (int j = 0; j < viewport.getColumnasViewport(); j++) {
             char letraColumna = (char) ('A' + viewport.getColumnaInicio() + j);
